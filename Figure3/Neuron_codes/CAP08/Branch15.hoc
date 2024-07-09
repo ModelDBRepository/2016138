@@ -1,0 +1,1052 @@
+// written by Gabriela Cirtala
+// Heterogenous ion channel conductance density model
+// This code corresponds to Branch 15 of the PC (Figure 3 in Cirtala2024)
+// This code will automatically run for PF in [2:2:150] for a reduction of 20% in CaP for branch 15
+// Generates many .dat files corresponding to each PF and each point at which the voltage is recorded (check Results folder)
+// Shows the dendritic spike propagation (check at PF activation time)
+
+// this code is based on the homogenous model proposed by Zang et al. (Zang 2021).
+
+
+load_file("nrngui.hoc")
+
+Default_Eleak = -65
+membranecap = 0.64      	/* specific membrane capacitance in uF cm^-2 */
+membraneresist = 120236 	/* specific membrane resistance in ohm cm^2 */
+axialresist = 120	     	/* axial resistivity in ohm cm */
+
+// Load the morphology file:
+xopen("PurkinjeMorphology_allbr.nrn")
+forsec "axon" delete_section()	// Delete original axon and add a fake AIS
+
+objref g2, b2,c2, distrx, distry, cdistry, p
+
+	forall {
+		insert pas e_pas=Default_Eleak	/* Insert Leak everywhere */
+	    insert hpkj	// Ih inserted everywhere
+		insert ds
+		insert pk
+	}
+
+    AIS {  g_pas=1/membraneresist Ra=axialresist cm=membranecap}
+	forsec spinydend {g_pas=5.3/membraneresist Ra=axialresist cm=5.3*membranecap}
+    forsec maindend {g_pas=1.2/membraneresist Ra=axialresist cm=1.2*membranecap}
+	forsec "soma" { g_pas=1/membraneresist Ra=axialresist cm=membranecap}
+
+	forsec maindend {insert cdp4N}
+	forsec alldend {
+			insert Kv3
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 4
+			insert newCaP
+			pcabar_newCaP = 1.90e-4
+			vshift_newCaP =-5
+			insert CaT3_1
+			pcabar_CaT3_1 = 2.7e-5
+			insert mslo
+			gbar_mslo = 0.21504
+			insert SK2
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			ghbar_hpkj = 0.00036
+			insert Kv1
+			gbar_Kv1 = 0.002//*2
+			insert Kv4
+			gbar_Kv4 = 0.0252
+			insert Kv4s
+			gbar_Kv4s = 0.015
+
+	}
+	forsec spinydend {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+
+	forsec branch1 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch2 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP  = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch3 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch4 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch5 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.9
+			gbar_Kv4s = 0.015*1.9
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch6 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*2.2
+			gbar_Kv4s = 0.015*2.2
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch7 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*2.6
+			gbar_Kv4s = 0.015*2.6
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch8 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*2.2
+			gbar_Kv4s = 0.015*2.2
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP  = 7.6000e-04*0.9
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch9 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch10 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch11 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.2
+			gbar_Kv4s = 0.015*1.2
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch12 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.3
+			gbar_Kv4s = 0.015*1.3
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch13 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.9
+			gbar_Kv4s = 0.015*1.9
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch14 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch15 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch16 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch17 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch18 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.0
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch19 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.0
+			gbar_Kv4s  = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch20 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.0
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch21 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP  =7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch22 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+access somaA
+somaA distance(0,0.5)
+
+forsec "soma" {
+	 // INa & IK's at soma only
+	//for soma, I make it fire under dissociated condition. The firing properties is comparable with Bean's data
+			insert naRsg		// INa + resurgent
+			gbar_naRsg = 0.03168
+			vshifta_naRsg = 0
+			vshiftk_naRsg = 0
+			vshifti_naRsg = -5
+
+			insert nap
+			gbar_nap =  1.4000e-04
+			insert pk
+			ena = 63
+			ghbar_hpkj = 1.0800e-04 // Default = 1
+
+			insert cdp20N_FD2
+			insert Kv3
+			gbar_Kv3 = 1.8
+			vshift_Kv3 = 4
+
+			insert Kv1
+			gbar_Kv1 = 0
+			insert newCaP
+			pcabar_newCaP = 1.9000e-04
+			kt_newCaP = 1
+			vshift_newCaP = -5
+			insert mslo
+			gbar_mslo = 0.8736
+			insert abBK
+			gabkbar_abBK = 0.3
+			insert SK2
+			gkbar_SK2 = 0.0075
+	}
+
+	AIS {
+				insert naRsg		// INa + resurgent
+				gbar_naRsg = 0.56
+				vshifta_naRsg = 15
+				vshiftk_naRsg = 5
+				vshifti_naRsg = -5
+
+				insert nap
+				gbar_nap = 0.0023
+
+				insert CaT3_1
+				pcabar_CaT3_1 =  1.2800e-04
+				ena = 63
+				ghbar_hpkj =  1.0800e-04
+
+
+				insert cdpAIS
+				insert Kv3
+				gbar_Kv3 = 115.2
+				vshift_Kv3 = 4
+				insert Kv1
+				gbar_Kv1 = 0
+
+				insert newCaP
+				pcabar_newCaP = 0.00228
+				kt_newCaP = 1
+				vshift_newCaP = -5
+
+				insert mslo
+				gbar_mslo = 6
+				insert abBK
+				gabkbar_abBK = 1.05
+				insert SK2
+				gkbar_SK2 = 0.0278
+		}
+
+
+objref patch_site
+patch_site = new List()
+
+ip = 0
+forsec patch_list {
+patch_site.append(new SectionRef())
+}
+
+celsius = 34
+dt = 0.02
+steps_per_ms = 1/dt
+dtsim = 0.02
+
+objref g2, b2,c2, distrm, distrd
+
+xopen ("electrode.hoc")
+xopen("distri.hoc")	//voltage spatial distribution
+
+proc clamp_cc() {
+
+	somaA {
+		stim1.del = 0
+		stim1.dur = 1000000
+		stim1.amp = $1
+	}
+}
+
+v_init = -70
+
+// Define the length of our simulation:
+tstop = 600
+
+objref scalefile
+scalefile=new File()
+
+xopen("distri_synapse.hoc")
+
+objref pc
+pc = new ParallelContext()
+
+//function farmed out to slave nodes
+func distscale() {local key, errval, cu_id, fr_id, dend_id localobj parvec, returnlist
+	key = $1
+	cu_id = int($1/100000000)
+	fr_id = int(($1 - cu_id*100000000)/1000000)
+	site_id = int(($1 - cu_id*100000000-fr_id*1000000)/10000)
+	dend_id = int(($1 - cu_id*100000000-fr_id*1000000-site_id*10000)/100)
+	trial_id = $1 - cu_id*100000000-fr_id*1000000-site_id*10000-dend_id*100
+	returnlist = new List()
+	returnlist = calc_EPSP_single(cu_id,fr_id,site_id,dend_id,trial_id)
+
+	pc.pack(returnlist.o(0))
+	pc.pack(returnlist.o(1))
+	pc.pack(returnlist.o(2))
+	pc.pack(returnlist.o(3))
+	pc.pack(returnlist.o(4))
+	pc.pack(returnlist.o(5))
+	pc.pack(returnlist.o(6))
+	pc.pack(returnlist.o(7))
+	pc.pack(returnlist.o(8))
+	pc.pack(returnlist.o(9))
+	pc.pack(returnlist.o(10))
+	pc.pack(returnlist.o(11))
+	pc.pack(returnlist.o(12))
+	pc.pack(returnlist.o(13))
+	pc.pack(returnlist.o(14))
+	pc.pack(returnlist.o(15))
+	pc.pack(returnlist.o(16))
+	pc.pack(returnlist.o(17))
+	pc.pack(returnlist.o(18))
+	pc.pack(returnlist.o(19))
+	pc.pack(returnlist.o(20))
+	pc.pack(returnlist.o(21))
+	pc.pack(returnlist.o(22))
+	pc.pack(returnlist.o(23))
+	pc.pack(returnlist.o(24))
+	pc.pack(returnlist.o(25))
+
+	pc.post(key)
+	return key
+}
+
+
+
+
+objref aSynapseList[11]
+obfunc calc_EPSP_single() {localobj outlist, currecord, integ_soma, br1,br14_dist,br14_prox,br14_dist2,br15_dist,br15_prox,br16_dist,br16_prox,br17_dist,br17_prox,br17_mid,br18_dist,br18_prox,br18_mid,br19_dist,br19_prox,br19_mid,br20_dist,br20_prox,br20_dist2,br21_dist,br21_prox,br21_mid,br22_dist,br22_prox,br22_dist2
+	//function to calculate the max deflection due to a single synapse
+	cu_id = $1
+	fr_id = $2
+	siteval = $3
+	synval= $4
+	tr_id = $5
+	curr = -0.4+(cu_id-1)*0.2
+
+	nlist = fr_id	// in fact nlist can be multiple, make synapses firing at bursting
+
+	Npf = 2+(synval-1)*2 // Number of Parallel Fibers
+for i = 1,nlist {aSynapseList[i-1] = new List() }	// every time this will be initialized.
+randomseed = cu_id*100000000+fr_id*1000000+siteval*10000 +synval*100 + tr_id
+
+br1 = new SectionList()
+
+patch_site.o(siteval-1).sec br1.subtree()
+br1.remove(cf)
+br1.unique()
+
+if (siteval==12) {
+	br1 = new SectionList()
+	forsec "dendA1_001101100*" br1.append()
+}
+if (i==13) {
+	br1 = new SectionList()
+	forsec "dendA1_0011011100*" br1.append()
+	forsec "dendA1_0011011101*" br1.append()
+}
+
+for i = 1,nlist {aSynapseList[i-1] = distSyns(Npf,br1,randomseed)}
+
+for i = 1,nlist {
+	for ii=1,aSynapseList[i-1].count() {
+  	  aSynapseList[i-1].object(ii-1).onset = 399 // Activation time of the PF
+  	  aSynapseList[i-1].object(ii-1).tau0 = 0.3
+  	  aSynapseList[i-1].object(ii-1).tau1 = 3
+   	 aSynapseList[i-1].object(ii-1).e = 0
+   	 aSynapseList[i-1].object(ii-1).gmax = 0.5e-3//
+	}
+}
+
+outlist=new List()
+integ_soma = new Vector()
+integ_soma.record(&somaA.v(0.5))
+
+br14_dist = new Vector()
+br14_dist.record(&dendA1_0110110.v(0.05))
+br14_prox = new Vector()
+br14_prox.record(&dendA1_0110.v(0.05))
+br14_dist2 = new Vector()
+br14_dist2.record(&dendA1_0111101.v(0.05)) //branch 14 - distal2
+
+br15_dist = new Vector()
+br15_dist.record(&dendA1_0101101101001.v(0.05))
+br15_prox = new Vector()
+br15_prox.record(&dendA1_01010.v(0.05))
+
+br16_dist = new Vector()
+br16_dist.record(&dendA1_010001000000.v(0.05))
+br16_prox = new Vector()
+br16_prox.record(&dendA1_01000.v(0.05))
+
+br17_dist = new Vector()
+br17_dist.record(&dendA1_01001011001100.v(0.05))
+br17_prox = new Vector()
+br17_prox.record(&dendA1_0100101.v(0.05))
+br17_mid = new Vector()
+br17_mid.record(&dendA1_0100101100.v(0.05))
+
+br18_dist = new Vector()
+br18_dist.record(&dendA1_0100110010.v(0.05))
+br18_prox = new Vector()
+br18_prox.record(&dendA1_010011.v(0.05))
+br18_mid = new Vector()
+br18_mid.record(&dendA1_01001101.v(0.05))
+
+br19_dist = new Vector()
+br19_dist.record(&dendA1_01001110001.v(0.05))
+br19_prox = new Vector()
+br19_prox.record(&dendA1_0100111.v(0.05))
+br19_mid = new Vector()
+br19_mid.record(&dendA1_0100111011.v(0.05))
+
+br20_dist = new Vector()
+br20_dist.record(&dendA1_010010001010.v(0.05))
+br20_prox = new Vector()
+br20_prox.record(&dendA1_01001000.v(0.05))
+br20_dist2 = new Vector()
+br20_dist2.record(&dendA1_01001000000111.v(0.05))
+
+br21_dist = new Vector()
+br21_dist.record(&dendA1_0100100100110110001.v(0.05))
+br21_prox = new Vector()
+br21_prox.record(&dendA1_010010010.v(0.05))
+br21_mid = new Vector()
+br21_mid.record(&dendA1_010010010101011.v(0.05))
+
+br22_dist = new Vector()
+br22_dist.record(&dendA1_0100100110000110.v(0.05))
+br22_prox = new Vector()
+br22_prox.record(&dendA1_010010011.v(0.05))
+br22_dist2 = new Vector()
+br22_dist2.record(&dendA1_01001001100001111.v(0.05))
+
+clamp_cc(curr)
+finitialize(v_init)
+continuerun(tstop)
+
+// Record vectors containing results for the soma and for different distal and proximal points on the branches situated on the right main division of the tree:
+outlist.append(integ_soma)
+outlist.append(br14_dist)
+outlist.append(br14_prox)
+outlist.append(br14_dist2)
+outlist.append(br15_dist)
+outlist.append(br15_prox)
+outlist.append(br16_dist)
+outlist.append(br16_prox)
+outlist.append(br17_dist)
+outlist.append(br17_prox)
+outlist.append(br17_mid)
+outlist.append(br18_dist)
+outlist.append(br18_prox)
+outlist.append(br18_mid)
+outlist.append(br19_dist)
+outlist.append(br19_prox)
+outlist.append(br19_mid)
+outlist.append(br20_dist)
+outlist.append(br20_prox)
+outlist.append(br20_dist2)
+outlist.append(br21_dist)
+outlist.append(br21_prox)
+outlist.append(br21_mid)
+outlist.append(br22_dist)
+outlist.append(br22_prox)
+outlist.append(br22_dist2)
+
+return outlist
+}
+
+pc.runworker()
+
+objref somavec,br14_distvec, br14_proxvec, br14_distvec2,br15_distvec, br15_proxvec, br15_distvec2,br16_distvec, br16_proxvec, br17_distvec, br17_proxvec, br17_midvec,br18_distvec, br18_proxvec, br18_midvec,br19_distvec, br19_proxvec, br19_midvec, br20_distvec, br20_proxvec, br20_distvec2, br21_distvec, br21_proxvec, br21_midvec,br22_distvec, br22_proxvec, br22_distvec2
+
+somavec = new Vector()
+br14_distvec = new Vector()
+br14_proxvec = new Vector()
+br14_distvec2 = new Vector()
+br15_distvec = new Vector()
+br15_proxvec = new Vector()
+br16_distvec = new Vector()
+br16_proxvec = new Vector()
+br17_distvec = new Vector()
+br17_proxvec = new Vector()
+br17_midvec = new Vector()
+br18_distvec = new Vector()
+br18_proxvec = new Vector()
+br18_midvec = new Vector()
+br19_distvec = new Vector()
+br19_proxvec = new Vector()
+br19_midvec = new Vector()
+br20_distvec = new Vector()
+br20_proxvec = new Vector()
+br20_distvec2 = new Vector()
+br21_distvec = new Vector()
+br21_proxvec = new Vector()
+br21_midvec = new Vector()
+br22_distvec = new Vector()
+br22_proxvec = new Vector()
+br22_distvec2 = new Vector()
+
+
+
+strdef tmpstr
+strdef outDir
+strdef cmd
+objref outfile
+outfile = new File()
+
+proc calcEPSPs() {
+	sprint(outDir,"Results")
+	sprint(cmd, "system(\"mkdir -p %s\")",outDir)
+	execute(cmd)
+	somaA distance(0,0.5)
+	for cu = 3, $1 {
+		for freq = 1, $2 {
+			for site = $3, $3 {
+				for m = 1, $4 {
+					for nt =$5 ,$5 {
+						mmtag=cu*100000000 + freq*1000000 + site*10000+m*100 + nt
+						pc.submit("distscale",mmtag)	//send out the error calculations
+					}
+				}
+			}
+		}
+	}
+	//collect error values
+	while (pc.working()) {
+		key = pc.retval()	//retrieve the tag
+		pc.look_take(key)	//remove the tag/job from the bulletin
+
+		somavec = pc.upkvec()	//unpack the error value associated with the tag
+		br14_distvec = pc.upkvec()
+		br14_proxvec = pc.upkvec()
+		br14_distvec2 = pc.upkvec()
+		br15_distvec = pc.upkvec()
+		br15_proxvec = pc.upkvec()
+		br16_distvec = pc.upkvec()
+		br16_proxvec = pc.upkvec()
+		br17_distvec = pc.upkvec()
+		br17_proxvec = pc.upkvec()
+		br17_midvec = pc.upkvec()
+		br18_distvec = pc.upkvec()
+		br18_proxvec = pc.upkvec()
+		br18_midvec = pc.upkvec()
+		br19_distvec = pc.upkvec()
+		br19_proxvec = pc.upkvec()
+		br19_midvec = pc.upkvec()
+		br20_distvec = pc.upkvec()
+		br20_proxvec = pc.upkvec()
+		br20_distvec2 = pc.upkvec()
+		br21_distvec = pc.upkvec()
+		br21_proxvec = pc.upkvec()
+		br21_midvec = pc.upkvec()
+		br22_distvec = pc.upkvec()
+		br22_proxvec = pc.upkvec()
+		br22_distvec2 = pc.upkvec()
+
+		print "received key ",key
+		cuno = int(key/100000000)
+		frno = int((key- cuno*100000000)/1000000)
+		siteno = int((key - cuno*100000000 - frno*1000000)/10000)
+		synno= int((key - cuno*100000000 - frno*1000000 - siteno*10000)/100)
+		trno  = key - cuno*100000000-frno*1000000-siteno*10000-synno*100
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vsoma.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		somavec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr14_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br14_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr14_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br14_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr14_dist2.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br14_distvec2.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr15_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br15_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr15_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br15_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr16_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br16_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr16_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br16_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr17_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br17_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr17_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br17_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr17_mid.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br17_midvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr18_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br18_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr18_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br18_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr18_mid.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br18_midvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr19_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br19_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr19_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br19_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr19_mid.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br19_midvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr20_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br20_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr20_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br20_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr20_distvec2.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br20_distvec2.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr21_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br21_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr21_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br21_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr21_mid.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br21_midvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr22_dist.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br22_distvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr22_prox.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br22_proxvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vbr22_dist2.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br22_distvec2.printf(outfile)
+		outfile.close()
+	}
+}
+
+calcEPSPs(3,1,15,75,1)  // Here, 75 corresponds to Npf = 75x2 (the PF step) = 150PF.
+//If you wish to change the total number of PF, just change this number to whatever you prefer.
+// If you prefer to run for only one PF choice please change the following line inside of the proc calcESP:
+// for m = 1, $4  ---> for m = $4, $4

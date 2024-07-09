@@ -1,0 +1,1269 @@
+// written by Gabriela Cirtala
+// Heterogenous ion channel conductance density model
+// This code corresponds to simultaneous activation of Branch 5 and 10 of the PC (Figure 7 in Cirtala2024)
+// This code is based on the code written by Yunliang Zang for the homogenous PC model proposed in Zang and De Schutter 2021, Journal of Neuroscience.
+// This code will automatically run for PF in [2:2:150] for 1.0CaP for branch 5 and 1.5CaP for branch10
+// Generates many .dat files corresponding to each PF and each point at which the voltage is recorded (check Results folder)
+// Shows the dendritic spike propagation (check at PF activation time
+
+load_file("nrngui.hoc")
+
+Default_Eleak = -65
+membranecap = 0.64      	/* specific membrane capacitance in uF cm^-2 */
+membraneresist = 120236 	/* specific membrane resistance in ohm cm^2 */
+axialresist = 120	     	/* axial resistivity in ohm cm */
+
+	xopen("PurkinjeMorphology_allbr.nrn")	// Load the morphology file.
+	forsec "axon" delete_section()	// Delete original axon and add a fake AIS
+
+objref g2, b2,c2, distrx, distry, cdistry, p
+
+	forall {
+		insert pas e_pas=Default_Eleak	/* Insert Leak everywhere */
+	  insert hpkj	// Ih inserted everywhere
+		insert ds
+		insert pk
+	}
+
+    AIS {  g_pas=1/membraneresist Ra=axialresist cm=membranecap}
+	forsec spinydend {g_pas=5.3/membraneresist Ra=axialresist cm=5.3*membranecap}
+    forsec maindend {g_pas=1.2/membraneresist Ra=axialresist cm=1.2*membranecap}
+	forsec "soma" { g_pas=1/membraneresist Ra=axialresist cm=membranecap}
+
+	forsec maindend {insert cdp4N}
+	forsec alldend {
+			insert Kv3
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 4
+			insert newCaP
+			pcabar_newCaP = 1.90e-4
+			vshift_newCaP =-5
+			insert CaT3_1
+			pcabar_CaT3_1 = 2.7e-5
+			insert mslo
+			gbar_mslo = 0.21504
+			insert SK2
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			ghbar_hpkj = 0.00036
+			insert Kv1
+			gbar_Kv1 = 0.002//*2
+			insert Kv4
+			gbar_Kv4 = 0.0252
+			insert Kv4s
+			gbar_Kv4s = 0.015
+
+	}
+	forsec spinydend {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+
+	forsec branch1 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch2 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP  = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch3 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch4 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch5 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.9
+			gbar_Kv4s = 0.015*1.9
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch6 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*2.2
+			gbar_Kv4s = 0.015*2.2
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch7 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*2.6
+			gbar_Kv4s = 0.015*2.6
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch8 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*2.2
+			gbar_Kv4s = 0.015*2.2
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP  = 7.6000e-04*0.9
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch9 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch10 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04*1.5
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch11 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.2
+			gbar_Kv4s = 0.015*1.2
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch12 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.3
+			gbar_Kv4s = 0.015*1.3
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch13 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.9
+			gbar_Kv4s = 0.015*1.9
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch14 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch15 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch16 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch17 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch18 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.0
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch19 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.0
+			gbar_Kv4s  = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch20 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264*1.0
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch21 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 =  0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP  =7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	forsec branch22 {
+			insert cdp4Nsp
+			gkbar_SK2 = 3.6000e-04
+			scal_SK2 = 1.0
+			gbar_Kv4 = 0.0264
+			gbar_Kv4s = 0.015
+			ghbar_hpkj = 3.2400e-04
+			vshift_Kv4 = 0
+			gbar_Kv1 = 0.001
+			gbar_Kv3 = 0.1512
+			vshift_Kv3 = 0
+			pcabar_CaT3_1 = 1.0800e-04
+			pcabar_newCaP = 7.6000e-04*0.8
+			vshift_newCaP = -5
+			scale_cdp4Nsp = 3.5
+			gbar_mslo = 0.0896
+			insert abBK
+			gabkbar_abBK = 0.15
+	}
+
+	somaA distance(0,0.5)
+	access somaA
+
+	//xopen("dendv_arnd21.ses")
+
+	forsec "soma" {
+	 // INa & IK's at soma only
+	//for soma, I make it fire under dissociated condition. The firing properties is comparable with Bean's data
+			insert naRsg		// INa + resurgent
+			gbar_naRsg = 0.03168
+			vshifta_naRsg = 0
+			vshiftk_naRsg = 0
+			vshifti_naRsg = -5
+
+			insert nap
+			gbar_nap =  1.4000e-04
+			insert pk
+			ena = 63
+			ghbar_hpkj = 1.0800e-04 // Default = 1
+
+			insert cdp20N_FD2
+			insert Kv3
+			gbar_Kv3 = 1.8
+			vshift_Kv3 = 4
+
+			insert Kv1
+			gbar_Kv1 = 0
+			insert newCaP
+			pcabar_newCaP = 1.9000e-04
+			kt_newCaP = 1
+			vshift_newCaP = -5
+			insert mslo
+			gbar_mslo = 0.8736
+			insert abBK
+			gabkbar_abBK = 0.3
+			insert SK2
+			gkbar_SK2 = 0.0075
+	}
+
+	AIS {
+			insert naRsg		// INa + resurgent
+			gbar_naRsg = 0.56
+			vshifta_naRsg = 15
+			vshiftk_naRsg = 5
+			vshifti_naRsg = -5
+
+			insert nap
+			gbar_nap = 0.0023
+
+			insert CaT3_1
+			pcabar_CaT3_1 =  1.2800e-04
+			ena = 63
+			ghbar_hpkj =  1.0800e-04
+
+
+			insert cdpAIS
+			insert Kv3
+			gbar_Kv3 = 115.2
+			vshift_Kv3 = 4
+			insert Kv1
+			gbar_Kv1 = 0
+
+			insert newCaP
+			pcabar_newCaP = 0.00228
+			kt_newCaP = 1
+			vshift_newCaP = -5
+
+			insert mslo
+			gbar_mslo = 6
+			insert abBK
+			gabkbar_abBK = 1.05
+			insert SK2
+			gkbar_SK2 = 0.0278
+	}
+
+
+objref patch_site
+patch_site = new List()
+
+ip = 0
+forsec patch_list {
+patch_site.append(new SectionRef())
+
+}
+
+celsius = 34
+dt = 0.02
+steps_per_ms = 1/dt
+dtsim = 0.02
+ntrial = 500
+tstop = 600 //final time
+
+Nsyn_grc = 1
+Ngrc = 2000
+NPFsyn = Ngrc*Nsyn_grc
+
+Nsyn_ST = 16
+NST = 9
+NSTsyn = Nsyn_ST*NST
+
+Nsyn_BS = 40
+NBS = 4
+NBSsyn = Nsyn_BS*NBS
+
+Freq_pf = 0.135
+Freq_st = 14.4
+Freq_bs = 14.4
+
+
+objref g2, b2,c2, distrm, distrd, rt, rn
+xopen ("electrode.hoc")
+xopen("distri.hoc")	//voltage spatial distribution
+
+v_init = -70
+
+objref scalefile
+scalefile=new File()
+
+xopen("distri_synapse.hoc")
+xopen("background_syn_distrib.hoc")
+
+//start parallel instance
+objref pc
+pc = new ParallelContext()
+
+//print "number of hosts: ", pc.nhost(), "\thost id: ", pc.id()
+
+//function farmed out to slave nodes
+func distscale() {local key, errval, cu_id, spk_id, syn_id localobj parvec, returnlist
+	key = $1
+	cu_id = int($1/10000000000)
+	spk_id = int(($1 - cu_id*10000000000)/100000000)
+	site_id = int(($1 - cu_id*10000000000-spk_id*100000000)/1000000)
+	syn_id = int(($1 - cu_id*10000000000-spk_id*100000000-site_id*1000000)/10000)
+	trial_id = $1 - cu_id*10000000000-spk_id*100000000-site_id*1000000-syn_id*10000
+	returnlist = new List()
+	returnlist = calc_EPSP_single(cu_id,spk_id,site_id,syn_id,trial_id)
+
+	pc.pack(returnlist.o(0))
+	pc.pack(returnlist.o(1))
+	pc.pack(returnlist.o(2))
+	pc.pack(returnlist.o(3))
+	pc.pack(returnlist.o(4))
+	pc.pack(returnlist.o(5))
+	pc.pack(returnlist.o(6))
+	pc.pack(returnlist.o(7))
+	pc.pack(returnlist.o(8))
+	pc.pack(returnlist.o(9))
+	pc.pack(returnlist.o(10))
+	pc.pack(returnlist.o(11))
+	pc.pack(returnlist.o(12))
+	pc.pack(returnlist.o(13))
+	pc.pack(returnlist.o(14))
+	pc.pack(returnlist.o(15))
+	pc.pack(returnlist.o(16))
+	pc.pack(returnlist.o(17))
+	pc.pack(returnlist.o(18))
+	pc.pack(returnlist.o(19))
+	pc.pack(returnlist.o(20))
+	pc.pack(returnlist.o(21))
+	pc.pack(returnlist.o(22))
+	pc.pack(returnlist.o(23))
+	pc.pack(returnlist.o(24))
+	pc.post(key)
+	return key
+}
+
+objref aSynapseList[11]
+objref recording, baby1, babyend,babybranchlet, temone,terminal
+
+obfunc calc_EPSP_single() {localobj outlist, currecord, integ_soma, br0, br1, tip0, tip1, onpath, patch, tip_br1, tip_br2, tip_br3, tip_br4, tip_br5, tip_br6, tip_br7, tip_br8, tip_br9, tip_br10, tip_br11, tip_br12, tip_br13, tip_br14,tip_br15,tip_br16,tip_br17,tip_br18,tip_br19,tip_br20,tip_br21,tip_br22
+	//function to calculate the max deflection due to a single synapse
+	cu_id = $1
+	dspk_id = $2
+	siteval = $3
+	synval= $4
+	tr_id = $5
+	curr = -0.4+(cu_id-1)*0.2
+	nlist = 2
+
+	Npf = 2+(synval-1)*2
+
+for i = 1,nlist {aSynapseList[i-1] = new List() }	// every time this will be initialized.
+
+randomseed0 = cu_id*10000000000+dspk_id*100000000+siteval*1000000 +synval*10000 + tr_id
+randomseed1 = randomseed0+dspk_id-siteval
+
+rt = new Random(randomseed0)
+rt.uniform(0,25)
+
+rn = new Random(randomseed0)
+rn.normal (0, 0.6)
+
+br0 = new SectionList()
+br1 = new SectionList()
+
+patch_site.o(dspk_id-1).sec br0.subtree()
+patch_site.o(siteval-1).sec br1.subtree()
+br0.remove(cf)
+br0.unique()
+br1.remove(cf)
+br1.unique()
+
+if (dspk_id==12) {
+	br0 = new SectionList()
+	forsec "dendA1_001101100*" br0.append()
+}
+if (dspk_id==13) {
+	br0 = new SectionList()
+	forsec "dendA1_0011011100*" br0.append()
+	forsec "dendA1_0011011101*" br0.append()
+}
+
+if (siteval==12) {
+	br1 = new SectionList()
+	forsec "dendA1_001101100*" br1.append()
+}
+if (siteval==13) {
+	br1 = new SectionList()
+	forsec "dendA1_0011011100*" br1.append()
+	forsec "dendA1_0011011101*" br1.append()
+}
+
+//br1.printnames()
+tip0 = new Vector()
+tip_br1 = new Vector()
+tip_br2 = new Vector()
+tip_br3 = new Vector()
+tip_br4 = new Vector()
+tip_br5 = new Vector()
+tip_br6 = new Vector()
+tip_br7 = new Vector()
+tip_br8 = new Vector()
+tip_br9 = new Vector()
+tip_br10 = new Vector()
+tip_br11 = new Vector()
+tip_br12 = new Vector()
+tip_br13 = new Vector()
+tip_br14 = new Vector()
+tip_br15 = new Vector()
+tip_br16 = new Vector()
+tip_br17 = new Vector()
+tip_br18 = new Vector()
+tip_br19 = new Vector()
+tip_br20 = new Vector()
+tip_br21 = new Vector()
+tip_br22 = new Vector()
+
+
+aSynapseList[0] = distSyns(Npf,br0,randomseed0)
+
+if (dspk_id  == 8) {
+	tip0.record(&dendA1_001011110110010110.v(0.5))
+} if (dspk_id  == 1) {
+tip0.record(&dendA1_00001101.v(0.5))
+} if (dspk_id  == 2) {
+tip0.record(&dendA1_001000111.v(0.05))
+}
+ if (dspk_id  == 3) {
+tip0.record(&dendA1_0010101100.v(0.5))
+} if (dspk_id  == 21) {
+	tip0.record(&dendA1_0100100100110110001.v(0.5))
+}
+
+
+	tip_br1.record(&dendA1_00001101.v(0.5))
+	tip_br2.record(&dendA1_001000111.v(0.05))
+	tip_br3.record(&dendA1_0010101100.v(0.5))
+	tip_br4.record(&dendA1_00101101001111.v(0.5))
+	tip_br5.record(&dendA1_00101110101000110.v(0.5))
+	tip_br6.record(&dendA1_0010111100111.v(0.5))
+	tip_br7.record(&dendA1_0010111101011001111.v(0.5))
+	tip_br8.record(&dendA1_001011110110010101.v(0.5))
+	tip_br9.record(&dendA1_001100110001110.v(0.5))
+	tip_br10.record(&dendA1_00111000010.v(0.5))
+	tip_br11.record(&dendA1_00110101101101.v(0.5))
+	tip_br12.record(&dendA1_0011011000001011100.v(0.5))
+	tip_br13.record(&dendA1_0011011101010010.v(0.5))
+	tip_br14.record(&dendA1_0110110.v(0.5))
+	tip_br15.record(&dendA1_01010101011.v(0.5))
+	tip_br16.record(&dendA1_01000100001.v(0.5))
+	tip_br17.record(&dendA1_01001011001100.v(0.5))
+	tip_br18.record(&dendA1_0100110010.v(0.5))
+	tip_br19.record(&dendA1_01001110001.v(0.5))
+	tip_br20.record(&dendA1_01001000000111.v(0.5))
+	tip_br21.record(&dendA1_0100100100110110001.v(0.5))
+	tip_br22.record(&dendA1_0100100110000110.v(0.5))
+
+
+aSynapseList[1] = distSyns(Npf,br1,randomseed1)
+
+for i = 1,nlist {
+	for ii=1,aSynapseList[i-1].count() {
+  	  aSynapseList[i-1].object(ii-1).onset = 400
+  	  aSynapseList[i-1].object(ii-1).tau0 = 0.3
+  	  aSynapseList[i-1].object(ii-1).tau1 = 3
+   	 aSynapseList[i-1].object(ii-1).e = 0
+   	 aSynapseList[i-1].object(ii-1).gmax = 0.5e-3//
+	}
+}
+
+// following are background synapses
+
+// need new random numbers
+
+nvecpf = new Vector(numsegsp, 0)
+nvecst= new Vector(numsegsp, 0)
+nvecbs= new Vector(numsegbs, 0)
+
+ampsynlist = new List()
+gabastsynlist = new List()
+gababssynlist = new List()
+ampsynprelist = new List()
+gabastsynprelist = new List()
+gababssynprelist = new List()
+
+for ii=1,NPFsyn {
+  x = mtotalpf/NPFsyn*(ii-1) //value drawn from uniform distribution over [0,mtotal]
+  jj = mvecpf.indwhere(">=", x) // the first element in mvecpf that is >=x
+  // this is the index of the segment that should get the synapse
+  nvecpf.x[jj] += 1             // the value will be 1 if it get the synapses
+}
+
+for ii=1,NSTsyn {
+  x = mtotalpf/NSTsyn*(ii-1) //value drawn from uniform distribution over [0,mtotal]
+  jj = mvecst.indwhere(">=", x) // the first element in mvecpf that is >=x
+  // this is the index of the segment that should get the synapse
+  nvecst.x[jj] += 1         // the value will be 1 if it get the synapses
+}
+
+for ii=1,NBSsyn {
+  x = mtotalbs/NBSsyn *(ii-1) //value drawn from uniform distribution over [0,mtotal]
+  jj = mvecbs.indwhere(">=", x) // the first element in mvecpf that is >=x
+  // this is the index of the segment that should get the synapse
+  nvecbs.x[jj] += 1             // the number of synapses in this segment
+}
+
+ii = 0
+forsec spinydend {
+  for (x, 0) {
+    num = nvecpf.x[ii]
+    if (num>0) {
+      for jj=1,num {ampsynlist.append(new Exp2Syn(x)) ampsynprelist.append(new NetStim(x))}
+    }
+    ii += 1 // we're moving on to the next segment,
+  }
+}
+
+ii = 0
+forsec spinydend {
+  for (x, 0) {
+    num = nvecst.x[ii]
+    if (num>0) {
+      for jj=1,num {gabastsynlist.append(new Exp2Syn(x)) gabastsynprelist.append(new NetStim(x))}
+    }
+    ii += 1 // we're moving on to the next segment,
+  }
+}
+
+ii = 0
+forsec bs {
+  for (x, 0) {
+    num = nvecbs.x[ii]
+    if (num>0) {
+      for jj=1,num {gababssynlist.append(new Exp2Syn(x)) gababssynprelist.append(new NetStim(x))}
+    }
+    ii += 1 // we're moving on to the next segment,
+  }
+}
+for i = 0, Ngrc-1 {
+ 	   ampsynprelist.object(i).interval = 1000/Freq_pf
+ 	   ampsynprelist.object(i).number = 10000
+ 	   ampsynprelist.object(i).start = 0
+ 	   ampsynprelist.object(i).noise = 1
+		ampsynprelist.object(i).seed(i+SEED_0+randomseed0)
+	for j=0,Nsyn_grc-1 {
+	   ampsynlist.object(Nsyn_grc*i+j).tau1 = 0.3
+	   ampsynlist.object(Nsyn_grc*i+j).tau2 = 3
+ 	   ampsynlist.object(Nsyn_grc*i+j).e = 0
+
+	   ampcon[Nsyn_grc*i+j] = new NetCon(ampsynprelist.object(i),ampsynlist.object(Nsyn_grc*i+j))
+	   ampcon[Nsyn_grc*i+j].weight = 0.5e-3
+	}
+}
+
+for i = 0,NST-1 {
+ 	gabastsynprelist.object(i).interval = 1000/Freq_st
+	gabastsynprelist.object(i).number = 10000
+	gabastsynprelist.object(i).start = 0
+	gabastsynprelist.object(i).noise = 1
+	gabastsynprelist.object(i).seed(i+SEED_1+randomseed0)
+
+	for j=0,Nsyn_ST-1 {
+	    gabastsynlist.object(Nsyn_ST*i+j).tau1 = 1
+	    gabastsynlist.object(Nsyn_ST*i+j).tau2 = 8
+	    gabastsynlist.object(Nsyn_ST*i+j).e = -85
+	    gabastcon[Nsyn_ST*i+j] = new NetCon(gabastsynprelist.object(i),gabastsynlist.object(Nsyn_ST*i+j))
+	    gabastcon[Nsyn_ST*i+j].weight = 0.1e-3
+	}
+}
+
+for i = 0, NBS-1{
+	    gababssynprelist.object(i).interval = 1000/Freq_bs
+	    gababssynprelist.object(i).number = 10000
+	    gababssynprelist.object(i).start = 0
+	    gababssynprelist.object(i).noise = 1
+	    gababssynprelist.object(i).seed(i+SEED_2+randomseed0)
+
+	for j=0,Nsyn_BS-1 {
+	    gababssynlist.object(Nsyn_BS*i+j).tau1 = 1
+	    gababssynlist.object(Nsyn_BS*i+j).tau2 = 8
+	    gababssynlist.object(Nsyn_BS*i+j).e = -85
+
+	    gababscon[Nsyn_BS*i+j] = new NetCon(gababssynprelist.object(i),gababssynlist.object(Nsyn_BS*i+j))
+	    gababscon[Nsyn_BS*i+j].weight = 0.1e-3
+	}
+}
+
+forsec br1 {
+temone = new SectionRef()
+if (temone.nchild == 0) {temone.sec terminal = new SectionRef()}
+}
+
+	outlist=new List()
+	integ_soma = new Vector()
+/******	Details: Transfers take place on exit from finitialize() and on exit from fadvance(). *******/
+	integ_soma.record(&somaA.v(0.5))
+
+	tip1 = new Vector()
+	tip1.record(&terminal.sec.v(0.5))
+
+	tip_br1 = new Vector()
+	tip_br2 = new Vector()
+	tip_br3 = new Vector()
+	tip_br4 = new Vector()
+	tip_br5 = new Vector()
+	tip_br6 = new Vector()
+	tip_br7 = new Vector()
+	tip_br8 = new Vector()
+	tip_br9 = new Vector()
+	tip_br10 = new Vector()
+	tip_br11 = new Vector()
+	tip_br12 = new Vector()
+	tip_br13 = new Vector()
+	tip_br14 = new Vector()
+	tip_br15 = new Vector()
+	tip_br16 = new Vector()
+	tip_br17 = new Vector()
+	tip_br18 = new Vector()
+	tip_br19 = new Vector()
+	tip_br20 = new Vector()
+	tip_br21 = new Vector()
+	tip_br22 = new Vector()
+
+		tip_br1.record(&dendA1_00001101.v(0.5))
+		tip_br2.record(&dendA1_001000111.v(0.05))
+		tip_br3.record(&dendA1_0010101100.v(0.5))
+		tip_br4.record(&dendA1_00101101001111.v(0.5))
+		tip_br5.record(&dendA1_00101110101000110.v(0.5))
+		tip_br6.record(&dendA1_0010111100111.v(0.5))
+		tip_br7.record(&dendA1_0010111101011001111.v(0.5))
+		tip_br8.record(&dendA1_001011110110010101.v(0.5))
+		tip_br9.record(&dendA1_001100110001110.v(0.5))
+		tip_br10.record(&dendA1_00111000010.v(0.5))
+		tip_br11.record(&dendA1_00110101101101.v(0.5))
+		tip_br12.record(&dendA1_0011011000001011100.v(0.5))
+		tip_br13.record(&dendA1_0011011101010010.v(0.5))
+		tip_br14.record(&dendA1_0110110.v(0.5))
+		tip_br15.record(&dendA1_01010101011.v(0.5))
+		tip_br16.record(&dendA1_01000100001.v(0.5))
+		tip_br17.record(&dendA1_01001011001100.v(0.5))
+		tip_br18.record(&dendA1_0100110010.v(0.5))
+		tip_br19.record(&dendA1_01001110001.v(0.5))
+		tip_br20.record(&dendA1_01001000000111.v(0.5))
+		tip_br21.record(&dendA1_0100100100110110001.v(0.5))
+		tip_br22.record(&dendA1_0100100110000110.v(0.5))
+
+
+stim1.del = 0
+stim1.dur = rt.repick()
+stim1.amp = -0.3
+
+//rn.play (&CCn.amp)
+
+finitialize(v_init)
+continuerun(tstop)
+
+for i = 1,nlist {aSynapseList[i-1].remove_all()}
+
+ampsynlist.remove_all()
+gabastsynlist.remove_all()
+gababssynlist.remove_all()
+ampsynprelist.remove_all()
+gabastsynprelist.remove_all()
+gababssynprelist.remove_all()
+
+outlist.append(integ_soma)
+outlist.append(tip0)
+outlist.append(tip1)
+outlist.append(tip_br1)
+outlist.append(tip_br2)
+outlist.append(tip_br3)
+outlist.append(tip_br4)
+outlist.append(tip_br5)
+outlist.append(tip_br6)
+outlist.append(tip_br7)
+outlist.append(tip_br8)
+outlist.append(tip_br9)
+outlist.append(tip_br10)
+outlist.append(tip_br11)
+outlist.append(tip_br12)
+outlist.append(tip_br13)
+outlist.append(tip_br14)
+outlist.append(tip_br15)
+outlist.append(tip_br16)
+outlist.append(tip_br17)
+outlist.append(tip_br18)
+outlist.append(tip_br19)
+outlist.append(tip_br20)
+outlist.append(tip_br21)
+outlist.append(tip_br22)
+
+
+
+
+return outlist
+}
+
+pc.runworker()
+
+//objects for input/output
+objref somavec, tipvec, patchvec, onpathvec,br1vec,br2vec,br3vec,br4vec,br5vec,br6vec,br7vec,br8vec,br9vec,br10vec,br11vec,br12vec,br13vec,br14vec,br15vec,br16vec,br17vec,br18vec,br19vec,br20vec,br21vec,br22vec
+
+somavec = new Vector()
+tipvec = new Vector()
+patchvec = new Vector()
+br1vec = new Vector()
+br2vec = new Vector()
+br3vec = new Vector()
+br4vec = new Vector()
+br5vec = new Vector()
+br6vec = new Vector()
+br7vec = new Vector()
+br8vec = new Vector()
+br9vec = new Vector()
+br10vec = new Vector()
+br11vec = new Vector()
+br12vec = new Vector()
+br13vec = new Vector()
+br14vec = new Vector()
+br15vec = new Vector()
+br16vec = new Vector()
+br17vec = new Vector()
+br18vec = new Vector()
+br19vec = new Vector()
+br20vec = new Vector()
+br21vec = new Vector()
+br22vec = new Vector()
+
+
+strdef tmpstr
+strdef outDir
+strdef cmd
+objref outfile
+outfile = new File()
+
+proc calcEPSPs() {
+	sprint(outDir,"Results")
+	sprint(cmd, "system(\"mkdir -p %s\")",outDir)
+	execute(cmd)
+	somaA distance(0,0.5)
+	// cu = 3 set the holding current to be 0 nA.
+	for cu = 3, $1 {
+		for dspk = $2, $2 {
+			for site = $3, $3 {
+				for m = 1, $4 {
+					for nt =$5 ,$5 {
+						mmtag=cu*10000000000 + dspk*100000000 + site*1000000 + m*10000 + nt
+						pc.submit("distscale",mmtag)	//send out the error calculations
+					}
+				}
+			}
+		}
+	}
+	//collect error values
+	while (pc.working()) {
+		key = pc.retval()	//retrieve the tag
+		pc.look_take(key)	//remove the tag/job from the bulletin
+		somavec = pc.upkvec()	//unpack the error value associated with the tag
+		tipvec = pc.upkvec()
+		patchvec = pc.upkvec()
+		br1vec = pc.upkvec()
+		br2vec = pc.upkvec()
+		br3vec = pc.upkvec()
+		br4vec = pc.upkvec()
+		br5vec = pc.upkvec()
+		br6vec = pc.upkvec()
+		br7vec = pc.upkvec()
+		br8vec = pc.upkvec()
+		br9vec = pc.upkvec()
+		br10vec = pc.upkvec()
+		br11vec = pc.upkvec()
+		br12vec = pc.upkvec()
+		br13vec = pc.upkvec()
+		br14vec = pc.upkvec()
+	  br15vec = pc.upkvec()
+		br16vec = pc.upkvec()
+		br17vec = pc.upkvec()
+		br18vec = pc.upkvec()
+		br19vec = pc.upkvec()
+		br20vec = pc.upkvec()
+		br21vec = pc.upkvec()
+		br22vec = pc.upkvec()
+
+		print "received key ",key
+		cuno = int(key/10000000000)
+		frno = int((key- cuno*10000000000)/100000000)
+		siteno = int((key - cuno*10000000000 - frno*100000000)/1000000)
+		synno= int((key - cuno*10000000000 - frno*100000000 - siteno*1000000)/10000)
+		trno  = key - cuno*10000000000-frno*100000000-siteno*1000000-synno*10000
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vsoma.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		somavec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip0.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		tipvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip1.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		patchvec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br1.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br1vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br2.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br2vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br3.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br3vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br4.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br4vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br5.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br5vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br6.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br6vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br7.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br7vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br8.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br8vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br9.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br9vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br10.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br10vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br11.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br11vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br12.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br12vec.printf(outfile)
+		outfile.close()
+
+	  sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br13.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br13vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br14.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br14vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br15.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br15vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br16.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br16vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br17.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br17vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br18.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br18vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br19.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br19vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br20.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br20vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br21.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br21vec.printf(outfile)
+		outfile.close()
+
+		sprint(tmpstr,"%s/%03d_%03d_%03d_%03d_%03d_vtip_br22.dat",outDir,cuno,frno,siteno,synno,trno)
+		outfile.wopen(tmpstr)
+		br22vec.printf(outfile)
+		outfile.close()
+
+	}
+}
+
+co_br = 10
+
+calcEPSPs(3,5,co_br,52,1)
